@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Lab08</string>
+    <string name="reverse_vertical">Reverse Vertical</string>
+    <string name="circle_speed">Circle Speed:</string>
+</resources>
