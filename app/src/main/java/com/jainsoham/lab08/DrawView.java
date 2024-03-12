@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -12,13 +13,18 @@ import androidx.annotation.Nullable;
 
 public class DrawView extends View {
     private final Paint circlePaint = new Paint();
+    private Paint linePaint = new Paint();
     private final Paint rectPaint = new Paint();
-    private int circleX = 100;
-    private int circleY = 100;
+    private final Paint circlePaint2 = new Paint();
+    private final Paint borderPaint = new Paint();
+    private int circleX = 150;
+    private int circleY = 150;
+    private int circle2X = 900;
+    private int circle2Y = 150;
     private float rectY = 1000.0f;
-    private int dXcircle = 8;
-    private int dYcircle = 8;
-    private int dYrect = -5;
+    private int dXcircle = 20;
+    private int dYcircle = 20;
+    private int dYrect = -8;
 
     public DrawView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -27,21 +33,116 @@ public class DrawView extends View {
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
-        circlePaint.setColor(Color.MAGENTA);
+        circlePaint.setColor(Color.rgb(248, 128, 88));
+        circlePaint2.setColor(Color.WHITE);
+
+        circlePaint2.setStyle(Paint.Style.STROKE);
+        circlePaint2.setStrokeWidth(6);
+        circlePaint2.setColor(Color.BLACK);
+
+        borderPaint.setStyle(Paint.Style.STROKE);
+        borderPaint.setStrokeWidth(3);
+        borderPaint.setColor(Color.BLACK);
+
         rectPaint.setColor(Color.BLUE);
+        linePaint.setStrokeWidth(6);
+        canvas.drawCircle(circleX, circleY, 132.5f, borderPaint);
         canvas.drawCircle(circleX, circleY, 130.5f, circlePaint);
+        canvas.drawCircle(circle2X, circle2Y, 120.5f, circlePaint2);
         canvas.drawRect(0, rectY, getWidth(), rectY + 100, rectPaint);
+
+        float left = circleX - 130.5f;
+        float top = circleY - 300f;
+        float right = circleX + 130.5f;
+        float bottom = circleY - 60f;
+
+        canvas.drawArc(left, top, right, bottom, 45, 90, false, linePaint);
+        canvas.drawArc(left + 20f, top, right - 20f, bottom - 5f, 45, 90, false, circlePaint);
+
+        canvas.drawArc(left, top + 360f, right, bottom + 360f, -135, 90, false, linePaint);
+        canvas.drawArc(left + 15f, top + 370f, right - 15f, bottom + 360f, -135, 90, false, circlePaint);
+
+        canvas.drawLine(circleX - 130.5f, circleY, circleX + 130.5f, circleY, linePaint);
+        canvas.drawLine(circleX, circleY - 130.5f, circleX, circleY + 130.5f, linePaint);
+
+        int centerX = circle2X - 60;
+        int centerY = circle2Y - 62;
+        int radius = 40;
+        int sides = 5;
+        Path pentagonPath = new Path();
+        float angle = (float) (2 * Math.PI / sides);
+        pentagonPath.moveTo(centerX + radius, centerY);
+        for (int i = 1; i < sides; i++) {
+            float x = (float) (centerX + radius * Math.cos(i * angle));
+            float y = (float) (centerY + radius * Math.sin(i * angle));
+            pentagonPath.lineTo(x, y);
+        }
+        pentagonPath.close();
+
+        canvas.save();
+        canvas.rotate(45, centerX, centerY);
+        canvas.drawPath(pentagonPath, linePaint);
+        canvas.restore();
+
+        int centerX2 = circle2X + 35;
+        int centerY2 = circle2Y - 150;
+        Path pentagonPath2 = new Path();
+        pentagonPath2.moveTo(centerX2 + radius, centerY2);
+        for (int i = 1; i < sides; i++) {
+            float x = (float) (centerX2 + radius * Math.cos(i * angle));
+            float y = (float) (centerY2 + radius * Math.sin(i * angle));
+            pentagonPath2.lineTo(x, y);
+        }
+        pentagonPath2.close();
+
+        canvas.save();
+        canvas.rotate(75, centerX, centerY);
+        canvas.drawPath(pentagonPath2, linePaint);
+        canvas.restore();
+
+        int centerX3 = circle2X;
+        int centerY3 = circle2Y + 50;
+        Path pentagonPath3 = new Path();
+        pentagonPath3.moveTo(centerX3 + radius, centerY3);
+        for (int i = 1; i < sides; i++) {
+            float x = (float) (centerX3 + radius * Math.cos(i * angle));
+            float y = (float) (centerY3 + radius * Math.sin(i * angle));
+            pentagonPath3.lineTo(x, y);
+        }
+        pentagonPath3.close();
+
+        canvas.save();
+        canvas.rotate(30, centerX, centerY);
+        canvas.drawPath(pentagonPath3, linePaint);
+        canvas.restore();
+
+        canvas.drawLine(centerX - 20, centerY, centerX2 - 110, centerY2 + 205, linePaint);
+        canvas.drawLine(centerX, centerY, centerX2 - 15, centerY2 + 140, linePaint);
+        canvas.drawLine(centerX2 - 80, centerY2 + 195, centerX3 + 60, centerY3 - 30, linePaint);
+        canvas.drawLine(centerX, centerY + 10, centerX + 75, centerY - 60, linePaint);
+
+        canvas.drawLine(centerX2 - 30, centerY2 + 270, centerX3 - 50, centerY3 + 20, linePaint);
+        canvas.drawLine(centerX2 + 30, centerY2 + 150, centerX2, centerY2 + 270, linePaint);
+
+        canvas.drawLine(centerX2 + 30, centerY2 + 150, centerX2 + 90, centerY2 + 175, linePaint);
+
+        canvas.drawLine(centerX2 + 30, centerY2 + 150, centerX2 + 5, centerY2 + 30, linePaint);
+
         circleX += dXcircle;
         circleY += dYcircle;
+
+        circle2X -= dXcircle;
+        circle2Y += dYcircle;
         rectY += dYrect;
         if (circleX < 100) { dXcircle = Math.abs(dXcircle); }
         if (circleX > getWidth() - 100) { dXcircle = -Math.abs(dXcircle); }
         if (circleY < 100) { dYcircle = Math.abs(dYcircle); }
         if (circleY > getHeight() - 100) { dYcircle = -Math.abs(dYcircle); }
-        if (rectY < 500 || rectY > 1500) { dYrect *= -1; }
+        if (rectY < 500 || rectY > 1450) { dYrect *= -1; }
         if (circleY > rectY - 125) { dYcircle = -Math.abs(dYcircle); }
         invalidate();
     }
+
 
     public void setdXcircle(int dXcircle) {
         this.dXcircle = dXcircle;
