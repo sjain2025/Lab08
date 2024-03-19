@@ -5,6 +5,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.SeekBar;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -13,6 +14,7 @@ public class MainActivity extends AppCompatActivity {
     DrawView drawView;
     SeekBar seekBar;
     ConstraintLayout layout;
+    Button pauseButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
         drawView = findViewById(R.id.drawView);
         seekBar = findViewById(R.id.seekbar);
         layout = findViewById(R.id.activity_main_layout);
+        pauseButton = findViewById(R.id.pauseButton);
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             int lastProgress;
@@ -47,6 +50,17 @@ public class MainActivity extends AppCompatActivity {
                         }
                 );
                 snackbar.show();
+            }
+        });
+
+        pauseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (drawView.getIsPaused()) {
+                    drawView.resume();
+                } else {
+                    drawView.pause();
+                }
             }
         });
     }

@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -17,53 +18,60 @@ public class DrawView extends View {
     private final Paint rectPaint = new Paint();
     private final Paint circlePaint2 = new Paint();
     private final Paint borderPaint = new Paint();
+    private final Paint backgroundWhite = new Paint();
+    private final Paint backgroundColor = new Paint();
     private int circleX = 150;
     private int circleY = 150;
     private int circle2X = 900;
     private int circle2Y = 150;
-    private float rectY = 1000.0f;
+    private float rectX = 350.0f;
+    private float rectY = 1400.0f;
     private int dXcircle = 20;
     private int dYcircle = 20;
-    private int dYrect = -8;
+    private int dYcircle2 = 20;
+    private int dXcircle2 = -20;
+
+    private boolean isPaused = false;
 
     public DrawView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (!isPaused) {
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                        case MotionEvent.ACTION_MOVE:
+                            rectX = event.getX() - (float) getWidth() / 6;
+                            invalidate();
+                            return true;
+                        default:
+                            return false;
+                    }
+                }
+                return false;
+            }
+        });
     }
 
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
+        backgroundColor.setColor(Color.rgb(230, 193, 177));
+        canvas.drawRect(0.0f, 0.0f, getWidth(), getHeight(), backgroundColor);
         circlePaint.setColor(Color.rgb(248, 128, 88));
         circlePaint2.setColor(Color.WHITE);
-
+        backgroundWhite.setColor(Color.WHITE);
         circlePaint2.setStyle(Paint.Style.STROKE);
         circlePaint2.setStrokeWidth(6);
         circlePaint2.setColor(Color.BLACK);
-
         borderPaint.setStyle(Paint.Style.STROKE);
         borderPaint.setStrokeWidth(3);
         borderPaint.setColor(Color.BLACK);
-
-        rectPaint.setColor(Color.BLUE);
+        rectPaint.setColor(Color.rgb(59, 84, 245));
         linePaint.setStrokeWidth(6);
-        canvas.drawCircle(circleX, circleY, 132.5f, borderPaint);
-        canvas.drawCircle(circleX, circleY, 130.5f, circlePaint);
-        canvas.drawCircle(circle2X, circle2Y, 120.5f, circlePaint2);
-        canvas.drawRect(0, rectY, getWidth(), rectY + 100, rectPaint);
 
-        float left = circleX - 130.5f;
-        float top = circleY - 300f;
-        float right = circleX + 130.5f;
-        float bottom = circleY - 60f;
-
-        canvas.drawArc(left, top, right, bottom, 45, 90, false, linePaint);
-        canvas.drawArc(left + 20f, top, right - 20f, bottom - 5f, 45, 90, false, circlePaint);
-
-        canvas.drawArc(left, top + 360f, right, bottom + 360f, -135, 90, false, linePaint);
-        canvas.drawArc(left + 15f, top + 370f, right - 15f, bottom + 360f, -135, 90, false, circlePaint);
-
-        canvas.drawLine(circleX - 130.5f, circleY, circleX + 130.5f, circleY, linePaint);
-        canvas.drawLine(circleX, circleY - 130.5f, circleX, circleY + 130.5f, linePaint);
+        canvas.drawCircle(circle2X, circle2Y, 120.5f, backgroundWhite);
 
         int centerX = circle2X - 60;
         int centerY = circle2Y - 62;
@@ -120,35 +128,74 @@ public class DrawView extends View {
         canvas.drawLine(centerX, centerY, centerX2 - 15, centerY2 + 140, linePaint);
         canvas.drawLine(centerX2 - 80, centerY2 + 195, centerX3 + 60, centerY3 - 30, linePaint);
         canvas.drawLine(centerX, centerY + 10, centerX + 75, centerY - 60, linePaint);
-
         canvas.drawLine(centerX2 - 30, centerY2 + 270, centerX3 - 50, centerY3 + 20, linePaint);
         canvas.drawLine(centerX2 + 30, centerY2 + 150, centerX2, centerY2 + 270, linePaint);
-
         canvas.drawLine(centerX2 + 30, centerY2 + 150, centerX2 + 90, centerY2 + 175, linePaint);
-
         canvas.drawLine(centerX2 + 30, centerY2 + 150, centerX2 + 5, centerY2 + 30, linePaint);
 
-        circleX += dXcircle;
-        circleY += dYcircle;
+        canvas.drawCircle(circle2X, circle2Y, 120.5f, circlePaint2);
+        canvas.drawRect(rectX, rectY, rectX + (float) getWidth() / 3, rectY + 100.0f, rectPaint);
 
-        circle2X -= dXcircle;
-        circle2Y += dYcircle;
-        rectY += dYrect;
-        if (circleX < 100) { dXcircle = Math.abs(dXcircle); }
-        if (circleX > getWidth() - 100) { dXcircle = -Math.abs(dXcircle); }
-        if (circleY < 100) { dYcircle = Math.abs(dYcircle); }
-        if (circleY > getHeight() - 100) { dYcircle = -Math.abs(dYcircle); }
-        if (rectY < 500 || rectY > 1450) { dYrect *= -1; }
-        if (circleY > rectY - 125) { dYcircle = -Math.abs(dYcircle); }
+        canvas.drawCircle(circleX, circleY, 132.5f, borderPaint);
+        canvas.drawCircle(circleX, circleY, 130.5f, circlePaint);
+
+        float left = circleX - 130.5f;
+        float top = circleY - 300f;
+        float right = circleX + 130.5f;
+        float bottom = circleY - 60f;
+
+        canvas.drawArc(left, top, right, bottom, 45, 90, false, linePaint);
+        canvas.drawArc(left + 20f, top, right - 20f, bottom - 5f, 45, 90, false, circlePaint);
+
+        canvas.drawArc(left, top + 360f, right, bottom + 360f, -135, 90, false, linePaint);
+        canvas.drawArc(left + 15f, top + 370f, right - 15f, bottom + 360f, -135, 90, false, circlePaint);
+
+        canvas.drawLine(circleX - 130.5f, circleY, circleX + 130.5f, circleY, linePaint);
+        canvas.drawLine(circleX, circleY - 130.5f, circleX, circleY + 130.5f, linePaint);
+
+        if (!isPaused) {
+            circleX += dXcircle;
+            circleY += dYcircle;
+
+            circle2X += dXcircle2;
+            circle2Y += dYcircle2;
+            if (circleX < 100) { dXcircle = Math.abs(dXcircle); }
+            if (circle2X < 100) { dXcircle2 = Math.abs(dXcircle2); }
+
+            if (circleX > getWidth() - 100) { dXcircle = -Math.abs(dXcircle); }
+            if (circle2X > getWidth() - 100) { dXcircle2 = -Math.abs(dXcircle2); }
+
+            if (circleY < 100) { dYcircle = Math.abs(dYcircle); }
+            if ((circleY > rectY - 125) && (circleX - rectX < (float) getWidth() / 3) && circleX > rectX) { dYcircle = -Math.abs(dYcircle); }
+            if (circleY > rectY + 100.0f) { dYcircle = Math.abs(dYcircle); }
+
+            if (circle2Y < 100) { dYcircle2 = Math.abs(dYcircle2); }
+            if ((circle2Y > rectY - 125) && (circle2X - rectX < (float) getWidth() / 3) && circle2X > rectX) { dYcircle2 = -Math.abs(dYcircle2); }
+            if (circle2Y > rectY + 100.0f) { dYcircle2 = Math.abs(dYcircle2); }
+        }
+
         invalidate();
     }
 
-
     public void setdXcircle(int dXcircle) {
         this.dXcircle = dXcircle;
+        this.dXcircle2 = dXcircle;
     }
 
     public void setdYcircle(int dYcircle) {
         this.dYcircle = dYcircle;
+        this.dYcircle2 = dYcircle;
+    }
+
+    public void pause() {
+        isPaused = true;
+    }
+
+    public void resume() {
+        isPaused = false;
+    }
+
+    public boolean getIsPaused() {
+        return isPaused;
     }
 }
