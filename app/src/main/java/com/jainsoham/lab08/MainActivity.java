@@ -15,6 +15,7 @@ public class MainActivity extends AppCompatActivity {
     SeekBar seekBar;
     ConstraintLayout layout;
     Button pauseButton;
+    Button resetButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
         seekBar = findViewById(R.id.seekbar);
         layout = findViewById(R.id.activity_main_layout);
         pauseButton = findViewById(R.id.pauseButton);
+        resetButton = findViewById(R.id.resetButton);
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             int lastProgress;
@@ -61,6 +63,13 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     drawView.pause();
                 }
+            }
+        });
+
+        resetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawView.reset();
             }
         });
     }

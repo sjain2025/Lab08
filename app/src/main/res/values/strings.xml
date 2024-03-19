@@ -3,4 +3,5 @@
     <string name="reverse_vertical">Reverse Vertical</string>
     <string name="circle_speed">Circle Speed:</string>
     <string name="pause">Pause/Resume</string>
+    <string name="reset">Reset</string>
 </resources>

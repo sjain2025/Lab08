@@ -198,4 +198,13 @@ public class DrawView extends View {
     public boolean getIsPaused() {
         return isPaused;
     }
+
+    public void reset() {
+        circleX = 150;
+        circleY = 150;
+        circle2X = 900;
+        circle2Y = 150;
+        rectX = 350.0f;
+        rectY = 1400.0f;
+    }
 }
